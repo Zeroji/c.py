@@ -1,0 +1,9 @@
+# PyCharm files
+.idea
+
+# Test files
+*.c
+*.h
+
+# Object files
+*.o
