@@ -30,6 +30,8 @@ class FileHandler:
         raise TypeError("line indices must be integers")
 
     def error(self, message, line_index, col_index=None):
+        if isinstance(line_index, tuple):
+            line_index, col_index = line_index
         msg = self.filename + ', '
         if isinstance(line_index, slice):
             msg += 'lines {start} to {end}'.format(start=line_index.start+1, end=line_index.stop)
