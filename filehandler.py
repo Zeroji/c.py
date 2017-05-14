@@ -1,3 +1,6 @@
+import utils
+
+
 class FileHandler:
     def __init__(self, filename):
         self.filename = filename
@@ -25,3 +28,28 @@ class FileHandler:
                 return line[col_index]
             raise TypeError("column indices must be integers")
         raise TypeError("line indices must be integers")
+
+    def error(self, message, line_index, col_index=None):
+        msg = self.filename + ', '
+        if isinstance(line_index, slice):
+            msg += 'lines {start} to {end}'.format(start=line_index.start+1, end=line_index.stop)
+            err = '\n'.join(self.lines[line_index])
+        else:
+            msg += 'line {index}'.format(index=line_index+1)
+            err = self.lines[line_index]
+        if col_index is not None:
+            msg += ', '
+            if isinstance(col_index, slice):
+                msg += 'columns {start} to {end}'.format(start=col_index.start+1, end=col_index.stop)
+            else:
+                msg += 'column {index}'.format(index=col_index+1)
+        msg += '\n' + err + '\n'
+        pointer = ''
+        if isinstance(col_index, slice):
+            pointer += ' ' * col_index.start + '^' * (col_index.stop - col_index.start)
+        elif isinstance(col_index, int):
+            pointer += ' ' * col_index + '^'
+        if len(pointer) > 0:
+            msg += pointer + ' '
+        msg += message
+        utils.err(msg)
