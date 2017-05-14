@@ -28,10 +28,31 @@ class Tokenizer:
         escape = False
         word = False
         number = False
+        multi_line_comment = False
+        _last = ''
         for i, line in enumerate(self.file):
             preprocessor = False
             empty = True
+            comment = False
             for j, c in enumerate(line):
+                last = _last  # Keeping track of previous character
+                _last = c
+                if not multi_line_comment and not quotes and (last + c) == '//':  # Single-line comment start
+                    comment = True
+                    token = None
+                    _last = ''
+                if comment:  # Single-line comment
+                    continue
+                if not multi_line_comment and not quotes and (last + c) == '/*':  # Multi-line comment start
+                    multi_line_comment = True
+                    token = None
+                    _last = ''
+                if multi_line_comment and (last + c) == '*/':  # Multi-line comment end
+                    multi_line_comment = False
+                    _last = ''
+                    continue
+                if multi_line_comment:  # Multi-line comment
+                    continue
                 if empty and c == '#':  # Handling preprocessor directives as a single token
                     preprocessor = True
                     empty = False
